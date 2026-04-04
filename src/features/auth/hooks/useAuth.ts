@@ -24,9 +24,11 @@ export const useAuth = () => {
 
   const logout = useCallback(async () => {
     trackUserDisconnect()
-    signOut(firebaseAuth)
+    if (firebaseAuth) {
+      signOut(firebaseAuth)
+      await firebaseAuth.signOut()
+    }
     authStore.clear()
-    return await firebaseAuth.signOut()
   }, [authStore])
 
   return {

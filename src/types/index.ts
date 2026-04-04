@@ -45,6 +45,38 @@ export type Article = BaseEntry & {
   canonical_url?: string
 }
 
+export type LinkPreview = {
+  title: string
+  subtitle: string
+  image_url: string
+  url: string
+}
+
+export type LinkedinArticle = Article & {
+  author_title: string
+  time_ago: string
+  shares_count: number
+  media_urls: string[]
+  link_preview: LinkPreview | null
+}
+
+export type QuotedTweet = {
+  author: string
+  screen_name: string
+  text: string
+  image_url: string
+}
+
+export type XcomArticle = Article & {
+  screen_name: string
+  retweet_count: number
+  views_count: number
+  is_blue_verified: boolean
+  bookmark_count: number
+  media_urls: string[]
+  quoted_tweet: QuotedTweet | null
+}
+
 export type Product = BaseEntry & {
   tagline: string
   votes_count: number

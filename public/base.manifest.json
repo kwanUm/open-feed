@@ -6,18 +6,33 @@
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
+  "permissions": ["cookies", "storage"],
   "host_permissions": [
-    "https://*.hackertab.dev/*"
+    "https://*.hackertab.dev/*",
+    "https://www.linkedin.com/*",
+    "https://x.com/*"
   ],
   "content_scripts": [
     {
-      "matches": [
-        "https://hackertab.dev/*"
-      ],
+      "matches": ["https://hackertab.dev/*"],
       "run_at": "document_start",
-      "js": [
-        "content.js"
-      ]
+      "js": ["content.js"]
+    },
+    {
+      "matches": ["https://x.com/*"],
+      "run_at": "document_start",
+      "js": ["content-xcom.js"]
+    },
+    {
+      "matches": ["https://claude.ai/*"],
+      "run_at": "document_idle",
+      "js": ["content-claude.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["auth.js", "content-xcom-inject.js"],
+      "matches": ["https://hackertab.dev/*", "https://x.com/*"]
     }
   ],
   "icons": {

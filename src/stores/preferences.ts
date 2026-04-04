@@ -37,6 +37,7 @@ export type UserPreferencesState = {
   advStatus: boolean
   DNDDuration: DNDDuration
   showReadPosts: boolean
+  smoothScroll: boolean
 }
 
 type UserPreferencesStoreActions = {
@@ -63,6 +64,7 @@ type UserPreferencesStoreActions = {
   removeSearchEngine: (searchEngineUrl: string) => void
   setAdvStatus: (status: boolean) => void
   setShowReadPosts: (value: boolean) => void
+  setSmoothScroll: (value: boolean) => void
 }
 
 export const useUserPreferences = create(
@@ -95,6 +97,7 @@ export const useUserPreferences = create(
       DNDDuration: 'never',
       advStatus: false,
       showReadPosts: true,
+      smoothScroll: false,
       setLayout: (layout) => set({ layout }),
       setPromptEngine: (promptEngine: string) => set({ promptEngine }),
       setListingMode: (listingMode: ListingMode) => set({ listingMode }),
@@ -170,6 +173,7 @@ export const useUserPreferences = create(
         }),
       setAdvStatus: (status) => set({ advStatus: status }),
       setShowReadPosts: (value) => set({ showReadPosts: value }),
+      setSmoothScroll: (value) => set({ smoothScroll: value }),
       removeCard: (cardName: string) =>
         set((state) => {
           return {

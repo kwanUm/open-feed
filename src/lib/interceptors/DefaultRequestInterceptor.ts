@@ -24,6 +24,7 @@ export async function DefaultRequestInterceptor(config: InternalAxiosRequestConf
 }
 
 const getUserToken = async () => {
+  if (!firebaseAuth) return null
   return new Promise((resolve, _) => {
     const unsub = firebaseAuth.onAuthStateChanged(async (user) => {
       if (user) {

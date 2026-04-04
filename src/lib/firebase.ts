@@ -9,7 +9,7 @@ const firebaseConfig = {
 if (!FIREBASE_API_KEY) {
   console.warn('Missing Firebase api Key')
 }
-// Initialize Firebase
-const app = initializeApp(firebaseConfig)
-const firebaseAuth = getAuth(app)
+
+const app = FIREBASE_API_KEY ? initializeApp(firebaseConfig) : null
+const firebaseAuth = app ? getAuth(app) : null
 export { firebaseAuth }

@@ -26,11 +26,13 @@ export const GeneralSettings = () => {
     theme,
     maxVisibleCards,
     showReadPosts,
+    smoothScroll,
     setTheme,
     setListingMode,
     setMaxVisibleCards,
     setOpenLinksNewTab,
     setShowReadPosts,
+    setSmoothScroll,
   } = useUserPreferences()
 
   const onOpenLinksNewTabChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,6 +99,17 @@ export const GeneralSettings = () => {
               checked={listingMode === 'compact'}
               icons={false}
               onChange={onlistingModeChange}
+            />
+          </div>
+        </div>
+
+        <div className="settingRow">
+          <p className="settingTitle">Smooth scrolling</p>
+          <div className="settingContent">
+            <Toggle
+              checked={smoothScroll}
+              icons={false}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSmoothScroll(e.target.checked)}
             />
           </div>
         </div>

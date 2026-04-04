@@ -32,11 +32,16 @@ export const App = () => {
     layout,
     DNDDuration,
     setDNDDuration,
+    smoothScroll,
   } = useUserPreferences()
 
   useLayoutEffect(() => {
     document.documentElement.style.setProperty('--user-cards-count', maxVisibleCards.toString())
   }, [maxVisibleCards])
+
+  useLayoutEffect(() => {
+    document.documentElement.classList.toggle('smoothScroll', smoothScroll)
+  }, [smoothScroll])
 
   useEffect(() => {
     document.body.classList.remove('preload')

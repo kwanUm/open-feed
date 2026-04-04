@@ -1,5 +1,6 @@
 import { CgIndieHackers } from 'react-icons/cg'
 import { FaDev, FaFreeCodeCamp, FaMediumM, FaReddit } from 'react-icons/fa'
+import { FaLinkedin, FaXTwitter } from 'react-icons/fa6'
 import { HiSparkles, HiTicket } from 'react-icons/hi'
 import { SiGithub, SiProducthunt, SiYcombinator } from 'react-icons/si'
 import HackernoonIcon from 'src/assets/icon_hackernoon.jpeg'
@@ -20,6 +21,8 @@ const { LobstersCard } = lazyImport(() => import('src/features/cards'), 'Lobster
 const { ProductHuntCard } = lazyImport(() => import('src/features/cards'), 'ProductHuntCard')
 const { RedditCard } = lazyImport(() => import('src/features/cards'), 'RedditCard')
 const { HackernoonCard } = lazyImport(() => import('src/features/cards'), 'HackernoonCard')
+const { LinkedinCard } = lazyImport(() => import('src/features/cards'), 'LinkedinCard')
+const { XcomCard } = lazyImport(() => import('src/features/cards'), 'XcomCard')
 
 export const SUPPORTED_CARDS: SupportedCardType[] = [
   {
@@ -137,6 +140,24 @@ export const SUPPORTED_CARDS: SupportedCardType[] = [
     component: HackernoonCard,
     icon: <img alt="hackernoon" src={HackernoonIcon} />,
     link: 'https://hackernoon.com/',
+    type: 'supported',
+  },
+  {
+    value: 'linkedin',
+    analyticsTag: 'linkedin',
+    label: 'LinkedIn Feed',
+    component: LinkedinCard,
+    icon: <FaLinkedin color="#0A66C2" />,
+    link: 'https://linkedin.com/',
+    type: 'supported',
+  },
+  {
+    value: 'xcom',
+    analyticsTag: 'xcom',
+    label: 'X.com Feed',
+    component: XcomCard,
+    icon: <FaXTwitter className="blockHeaderWhite" />,
+    link: 'https://x.com/',
     type: 'supported',
   },
 ]

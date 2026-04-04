@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         ? GoogleAuthProvider.credential(null, token)
         : GithubAuthProvider.credential(token)
 
+    if (!firebaseAuth) return Promise.resolve()
     return signInWithCredential(firebaseAuth, authProvider)
       .then(async (userCredential) => {
         const user = userCredential.user
@@ -160,6 +161,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    * and logout the user if the session has expired
    */
   useEffect(() => {
+    if (!firebaseAuth) return
     const unsubscribe = firebaseAuth.onAuthStateChanged(async (fbUser) => {
       if (!fbUser) {
         if (isConnected) {
