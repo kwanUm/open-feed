@@ -1,58 +1,88 @@
-(function () {
-  chrome.storage.local.get(['claude_pending_message'], (result) => {
-    const text = result.claude_pending_message
-    if (!text) return
+// Content script injected into claude.ai pages (runs in background tab).
+// Reads a pending LinkedIn prompt from storage, submits it to Claude,
+// waits for the response, parses the JSON, writes it back to storage,
+// then asks the background to close this tab — all invisible to the user.
 
-    chrome.storage.local.remove('claude_pending_message')
+(async () => {
+  const { claude_linkedin_prompt } = await chrome.storage.local.get('claude_linkedin_prompt')
+  if (!claude_linkedin_prompt) return
+  await chrome.storage.local.remove('claude_linkedin_prompt')
 
-    const tryFill = (attempts) => {
-      if (attempts <= 0) return
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-      // Claude.ai uses a contenteditable div with role="textbox" or a ProseMirror editor
-      const editor =
-        document.querySelector('[contenteditable="true"]') ||
+  // Wait for Claude's editor to appear
+  const getEditor = async (attempts = 40) => {
+    for (let i = 0; i < attempts; i++) {
+      const el =
+        document.querySelector('[contenteditable="true"][data-placeholder]') ||
         document.querySelector('div.ProseMirror') ||
+        document.querySelector('[contenteditable="true"]') ||
         document.querySelector('[role="textbox"]')
+      if (el) return el
+      await sleep(500)
+    }
+    return null
+  }
 
-      if (!editor) {
-        setTimeout(() => tryFill(attempts - 1), 500)
-        return
-      }
+  const editor = await getEditor()
+  if (!editor) {
+    chrome.runtime.sendMessage({ type: 'CLOSE_CLAUDE_TAB' })
+    return
+  }
 
-      // Focus and set content
-      editor.focus()
+  editor.focus()
+  document.execCommand('insertText', false, claude_linkedin_prompt)
+  if (!editor.textContent?.trim()) {
+    editor.textContent = claude_linkedin_prompt
+    editor.dispatchEvent(new Event('input', { bubbles: true }))
+  }
 
-      // Use execCommand for contenteditable compatibility
-      document.execCommand('insertText', false, text)
+  await sleep(800)
 
-      // If execCommand didn't work, try direct manipulation
-      if (!editor.textContent || editor.textContent.trim().length === 0) {
-        editor.textContent = text
-        editor.dispatchEvent(new Event('input', { bubbles: true }))
-      }
+  // Click the send button
+  const sendBtn =
+    document.querySelector('button[aria-label="Send Message"]') ||
+    document.querySelector('button[aria-label="Send message"]') ||
+    document.querySelector('button[data-testid="send-button"]') ||
+    document.querySelector('fieldset button:last-of-type') ||
+    [...document.querySelectorAll('button')].find((b) => b.type === 'submit')
+  if (sendBtn) sendBtn.click()
 
-      // Try to click the send button after a short delay
-      setTimeout(() => {
-        const sendButton =
-          document.querySelector('button[aria-label="Send Message"]') ||
-          document.querySelector('button[data-testid="send-button"]') ||
-          // Fallback: find button with an SVG arrow icon near the editor
-          document.querySelector('fieldset button:last-of-type') ||
-          Array.from(document.querySelectorAll('button')).find(
-            (b) => b.querySelector('svg') && b.closest('fieldset, form, [role="presentation"]')
-          )
+  // Scan the full page text for our JSON response — no fragile DOM selectors needed
+  const extractJson = () => {
+    const text = document.body?.innerText || ''
+    // Match the exact shape we asked for
+    const match = text.match(/\{[^{}]*"role"\s*:\s*"[^"]*"[^{}]*\}/)
+    if (!match) return null
+    try {
+      const parsed = JSON.parse(match[0])
+      return parsed.role ? parsed : null
+    } catch {
+      return null
+    }
+  }
 
-        if (sendButton && !sendButton.disabled) {
-          sendButton.click()
+  // Poll until response stabilises (text stops growing)
+  let prevLen = 0
+  let stableCount = 0
+  for (let i = 0; i < 90; i++) {
+    await sleep(1000)
+    const len = (document.body?.innerText || '').length
+    if (len > prevLen) {
+      prevLen = len
+      stableCount = 0
+    } else if (len === prevLen && len > 200) {
+      stableCount++
+      if (stableCount >= 3) {
+        const result = extractJson()
+        if (result) {
+          await chrome.storage.local.set({ claude_inferred_role: result })
         }
-      }, 300)
+        break
+      }
     }
+  }
 
-    // Wait for page to fully load, then try to fill
-    if (document.readyState === 'complete') {
-      setTimeout(() => tryFill(20), 1000)
-    } else {
-      window.addEventListener('load', () => setTimeout(() => tryFill(20), 1000))
-    }
-  })
+  // Close this background tab
+  chrome.runtime.sendMessage({ type: 'CLOSE_CLAUDE_TAB' })
 })()

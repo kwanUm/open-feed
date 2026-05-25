@@ -6,7 +6,7 @@ import { MdAccessTime } from 'react-icons/md'
 import { CardItemWithActions, CardLink } from 'src/components/Elements'
 import { Attributes } from 'src/lib/analytics'
 import { useUserPreferences } from 'src/stores/preferences'
-import { LinkedinArticle, BaseItemPropsType } from 'src/types'
+import { LinkedinArticle, BaseItemPropsType, SharedPost } from 'src/types'
 
 type Props = BaseItemPropsType<LinkedinArticle> & {
   expandedId: string | null
@@ -23,6 +23,9 @@ const ArticleItem = (props: Props) => {
     const parts = [item.title]
     if (item.author_title) parts[0] += ` · ${item.author_title}`
     if (item.description) parts.push(item.description)
+    if (item.shared_post) {
+      parts.push(`> ${item.shared_post.author}${item.shared_post.author_title ? ` · ${item.shared_post.author_title}` : ''}:\n> ${item.shared_post.text}`)
+    }
     if (item.link_preview?.title) parts.push(`${item.link_preview.title}\n${item.link_preview.url}`)
     return parts.join('\n\n')
   }
@@ -95,6 +98,31 @@ const ArticleItem = (props: Props) => {
                       {item.media_urls.map((url, i) => (
                         <img key={i} src={url} className="rowMediaImage" alt="" />
                       ))}
+                    </div>
+                  )}
+                  {item.shared_post && (
+                    <div className="rowQuotedTweet" dir="auto">
+                      <div className="rowQuotedTweetHeader">
+                        {item.shared_post.avatar_url && (
+                          <img src={item.shared_post.avatar_url} className="rowQuotedTweetAvatar" alt="" />
+                        )}
+                        <strong>{item.shared_post.author}</strong>
+                        {item.shared_post.author_title && (
+                          <span style={{ color: 'var(--color-text-secondary)', marginLeft: 4 }}>
+                            {item.shared_post.author_title}
+                          </span>
+                        )}
+                      </div>
+                      {item.shared_post.text && (
+                        <p className="rowQuotedTweetText">{item.shared_post.text}</p>
+                      )}
+                      {item.shared_post.media_urls?.length > 0 && (
+                        <div className="rowMediaGallery">
+                          {item.shared_post.media_urls.map((url, i) => (
+                            <img key={i} src={url} className="rowMediaImage" alt="" />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                   {item.link_preview && (

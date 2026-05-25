@@ -85,7 +85,7 @@ export const DNDSettings = () => {
       <p className="settingTitle">
         Do not disturb
         <br />
-        <span className="settingHint">Pause Hackertab for a period of time</span>
+        <span className="settingHint">Pause OpenFeed for a period of time</span>
       </p>
       <div className="settingContent">
         <div className="form">
@@ -97,7 +97,7 @@ export const DNDSettings = () => {
               isClearable={false}
               isSearchable={false}
               defaultValue={getDefaultValue()}
-              classNamePrefix={'hackertab'}
+              classNamePrefix={'openfeed'}
               onChange={onPeriodSelect}
             />
           </div>

@@ -1,78 +1,57 @@
-[![Website hackertab.dev](https://img.shields.io/website-up-down-green-red/https/hackertab.dev.svg)](https://hackertab.dev/)
-[![Apache 2 license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/medyo/hackertab.dev/blob/master/LICENSE)
-[![Mozilla Add-on](https://img.shields.io/amo/v/hackertab-dev?style=plastic)](https://bit.ly/hackertab-ff)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/ocoipcahhaedjhnpoanfflhbdcpmalmp?style=plastic)](https://bit.ly/hackertab-ch)
-[![Chrome Web Store Rating](https://img.shields.io/chrome-web-store/stars/ocoipcahhaedjhnpoanfflhbdcpmalmp.svg?colorB=%234FC828&label=rating&style=flat)](https://chrome.google.com/webstore/detail/hackertabdev/ocoipcahhaedjhnpoanfflhbdcpmalmp/reviews)
+# OpenFeed
 
-# Hackertab.dev — All Developer news in one tab!
+A new-tab browser extension that replaces your blank tab with a feed reader **that runs entirely inside your browser** — no backend, no account, no telemetry.
 
-**Hackertab makes it easy for you to stay up-to-date with the latest developer news, tools, jobs and events.**
+## The premise
 
-<img src="/demo/demo_hackertab.dev.jpeg" width="100%" alt="Hackertab.dev"/>
+Most feed readers route everything through a server: that's where they fetch your sources, parse the HTML, dedupe items, run filtering, and serve them back. That server sees everything you read.
 
-As a developer, it can be difficult to stay on top of everything happening in the field. Hackertab makes it easy by allowing you to customize your default tab page to include news, tools and events from top sources such as GitHub Trendings, Hacker News, DevTo, Medium, and Product Hunt. No matter what type of developer you are, you'll find valuable and relevant information with Hackertab. Don't miss out - give it a try today!
+OpenFeed flips it. The browser does all the work:
 
-#### Demo
+- **Fetching.** Public APIs (Hacker News, Reddit, GitHub Trending, dev.to, Lobsters, etc.) get fetched directly from the browser. RSS feeds (Medium, HackerNoon, FreeCodeCamp) go through the extension's background service worker to bypass CORS. For authenticated feeds (LinkedIn, X), the extension reads your already-logged-in session cookies and calls the same internal APIs the site itself uses.
+- **Parsing + filtering.** Structured JSON sources parsed directly. RSS feeds parsed client-side with `htmlparser2`. Your reading preferences never leave your machine.
+- **Storage.** All preferences, bookmarks, and read state live in `localStorage`. Nothing syncs anywhere.
 
-👉 [now.hackertab.dev](https://now.hackertab.dev)
+The result: a personal, private feed assembled entirely client-side. The only network traffic is to the sources themselves.
 
-## 👩‍💻 How to use it
+## Status
 
-- Install the extension from the [Chrome store](https://bit.ly/hackertab-ch), or [Mozilla add-ons](https://bit.ly/hackertab-ff)
-- Open a new tab
-- The extension should now be running and visible
-- Select your preferred programming languages and sources.
-- Enjoy
+Personal project, no guarantees. This is a fork of [hackertab.dev](https://github.com/medyo/hackertab.dev) (Apache-2.0).
 
-## 🔥 Features
+**Sources supported:**
+- GitHub Trending — GitHub Search API
+- Hacker News — Firebase public API
+- Reddit — public JSON API (`reddit.com/r/{sub}/hot.json`)
+- Dev.to — public REST API
+- Lobsters — public JSON API
+- Medium — RSS via background service worker
+- HackerNoon — RSS via background service worker
+- FreeCodeCamp — RSS via background service worker
+- Upcoming conferences — `tech-conferences/conference-data` on GitHub
+- LinkedIn feed — via extension session cookies (must be logged in)
+- X.com feed — via extension session cookies (must be logged in)
+- Custom RSS feeds
 
-- 🆕 Daily updated content
-- 💻 Customizable by programming language, framework and topic.
-- 👍 Curated content from the best sources.
-- 🔖 Bookmark and read it later.
-- 🌙 Dark mode for when it gets late.
-- ✨ AI-powered recommendations exclusively tailored to your preferences.
+## Heads-up on terms of service
 
-Even more features are going to come in the future!
+LinkedIn, X, and Claude.ai restrict third-party automated access to their platforms. This tool isn't that — it runs entirely in your browser, uses your own session, reads only your own feed, and sends nothing to any third party. That said, their ToS language is broad, so use at your own discretion.
 
-## Data sources
-
-- Github Trendings
-- Hackernews
-- DevTo
-- Hashnode
-- Lobsters
-- Confs.tech
-- Product Hunt
-- Reddit
-- Freecodecamp
-- Medium
-- Indiehackers
-- Hackernoon
-- Custom RSS Feed
-- **or create an issue to ask for a new data source**
-
-## Support
-
-Please do not hesitate to ask a question, report a bug or add a suggestion. or send an email to hello@hackertab.dev
-
-## Development
-
-Please use the develop branch. Create an .env file with the necessary env variables
+## Install
 
 ```bash
-$ git clone --branch develop git@github.com:medyo/hackertab.dev.git
-$ cd hackertab.dev
-$ yarn
-$ yarn start
-$ # Then visit http://localhost:3000
+npm install
+npm run build:chrome
 ```
 
-## Maintainers
+Then load `dist/` as an unpacked Chrome extension (`chrome://extensions` → "Load unpacked").
 
-- [medyo](https://github.com/medyo)
+## Develop
 
-## Licencing
+```bash
+npm install
+npm run dev
+```
 
-Hackertab is licensed under the Apache License, Version 2.0.
-See [LICENSE](/LICENSE) for the full license text.
+## License
+
+Apache-2.0. See [LICENSE](./LICENSE).

@@ -1,3 +1,7 @@
+// Injected into the x.com page's main world (not the isolated extension context).
+// Patches window.fetch to intercept the HomeTimeline GraphQL request and extract
+// the bearer token and queryId from its headers/URL, then postMessages them to
+// content-xcom.js which forwards them to the background service worker for storage.
 (function () {
   const originalFetch = window.fetch
   window.fetch = function (...args) {

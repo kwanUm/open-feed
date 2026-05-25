@@ -1,3 +1,2 @@
-export * from "./Placeholder"
-export * from "./ProductHuntPlaceholder"
-export * from "./AdPlaceholder"
+export * from './Placeholder'
+export * from './ProductHuntPlaceholder'

@@ -36,7 +36,7 @@ const sharingButtons = [
     component: TwitterShareButton,
     icon: TwitterIcon,
     name: 'twitter',
-    body: `via ${twitterHandle}`,
+    body: twitterHandle ? `via ${twitterHandle}` : '',
   },
   { component: RedditShareButton, icon: RedditIcon, name: 'reddit' },
   { component: LinkedinShareButton, icon: LinkedinIcon, name: 'linkedin' },

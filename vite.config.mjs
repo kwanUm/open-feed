@@ -1,4 +1,3 @@
-import { sentryVitePlugin } from '@sentry/vite-plugin'
 import react from '@vitejs/plugin-react'
 import fs from 'fs'
 import path from 'path'
@@ -15,9 +14,6 @@ export default defineConfig(({ mode }) => {
   const manifestPath = path.resolve(__dirname, 'public', 'base.manifest.json')
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
   const appVersion = manifest.version || '0.0.0'
-  if (!env.VITE_API_URL) {
-    throw new Error('VITE_API_URL is not defined, create an .env file with this variable')
-  }
 
   if (buildTarget == 'extension' && !buildPlatform) {
     throw new Error(
@@ -35,20 +31,6 @@ export default defineConfig(({ mode }) => {
       react(),
       viteTsconfigPaths(),
       svgrPlugin(),
-      sentryVitePlugin({
-        org: 'hackertabdev',
-        project: 'hackertab',
-        authToken: env.VITE_SENTRY_TOKEN,
-        disable: isDev,
-        release: {
-          name: `${appVersion}-${buildTarget == 'extension' ? buildPlatform : buildTarget}`,
-        },
-        sourcemaps: !isDev
-          ? {
-              filesToDeleteAfterUpload: ['./dist/assets/*.map', './assets/*.map'],
-            }
-          : false,
-      }),
     ],
     define: {
       'process.env': {},
@@ -90,7 +72,6 @@ export default defineConfig(({ mode }) => {
               '@szhsin/react-menu',
             ],
             utils: [
-              '@amplitude/analytics-browser',
               'axios-cache-adapter',
               'country-emoji',
               'htmlparser2',
@@ -104,14 +85,16 @@ export default defineConfig(({ mode }) => {
     server: {
       open: true,
       sourcemap: false,
-      proxy: {
-        '/api': {
-          target: env.VITE_API_URL,
-          changeOrigin: true,
-          secure: false,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-      },
+      proxy: env.VITE_API_URL
+        ? {
+            '/api': {
+              target: env.VITE_API_URL,
+              changeOrigin: true,
+              secure: false,
+              rewrite: (path) => path.replace(/^\/api/, ''),
+            },
+          }
+        : undefined,
     },
     resolve: {
       alias: {

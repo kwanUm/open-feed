@@ -20,8 +20,9 @@
 
 .horizontalTabsLayout .content {
   background-color: var(--card-background-color);
-  border-radius: 10px;
-  box-shadow: 0 0 12px var(--card-border-color);
+  border-radius: 14px;
+  border: 1px solid var(--card-border-color);
+  box-shadow: none;
   width: 100%;
   height: auto;
 }
@@ -35,18 +36,26 @@
   gap: 10px;
 }
 .horizontalTabsLayout .navigation .link {
-  padding: 10px;
-  height: 24px;
-  font-size: 18px;
+  padding: 10px 14px;
+  height: auto;
+  font-size: 15px;
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
   color: var(--horizontal-tabs-layout-text-color);
+  border-radius: 8px;
+  transition: background-color 0.15s, color 0.15s;
+}
+.horizontalTabsLayout .navigation .link:hover:not(.active) {
+  background-color: rgba(99, 102, 241, 0.06);
+  color: var(--primary-text-color);
 }
 .horizontalTabsLayout .navigation .link.active {
   color: var(--horizontal-tabs-layout-active-color);
-  border-right: 4px solid var(--horizontal-tabs-layout-active-color);
-  font-weight: bold;
+  background-color: rgba(99, 102, 241, 0.12);
+  border-radius: 8px;
+  border-right: none;
+  font-weight: 600;
 }
 
 @media only screen and (max-width: 768px) {

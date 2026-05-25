@@ -91,7 +91,7 @@ const ConferencesItem = ({ item, analyticsTag }: BaseItemPropsType<Conference>) 
               title: `${item.title}, ${conferenceLocation?.label || ''}`,
               startDate,
               endDate,
-              description: `Find out more at ${item.url}.\nThis event was added via Hackertab.dev`,
+              description: `Find out more at ${item.url}.\nThis event was added via OpenFeed`,
               location: location,
             })
           }}>

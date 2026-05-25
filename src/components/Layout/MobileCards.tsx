@@ -14,7 +14,6 @@ export const MobileCards = ({ selectedCard }: { selectedCard: SelectedCard }) =>
     ? React.createElement(currentCard?.component || CustomRssCard, {
         key: currentCard.value,
         meta: currentCard,
-        withAds: true,
       })
     : null
 }

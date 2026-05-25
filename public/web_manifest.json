@@ -1,7 +1,7 @@
 {
-  "short_name": "Hackertab.dev",
-  "name": "All developer news in one tab",
-  "description": "Hackertab helps developers stay up-to-date with the latest dev trends and tools",
+  "short_name": "OpenFeed",
+  "name": "OpenFeed",
+  "description": "Your personal feed, served from your own browser",
   "icons": [
     {
       "src": "/logos/logoVector.svg",
@@ -25,14 +25,14 @@
       "sizes": "485x1024",
       "type": "image/webp",
       "form_factor": "narrow",
-      "label": "Hackertab is available on Desktop and Mobile."
+      "label": "OpenFeed is available on Desktop and Mobile."
     },
     {
       "src": "/screenshots/screenshot_desktop_1.webp",
       "sizes": "1280x720",
       "type": "image/webp",
       "form_factor": "wide",
-      "label": "Hackertab is available on Desktop and Mobile."
+      "label": "OpenFeed is available on Desktop and Mobile."
     }
   ],
   "start_url": "/?source=pwa",

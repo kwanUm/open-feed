@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
 import { BsChevronDown } from 'react-icons/bs'
-import { SearchBarWithLogo } from 'src/components/Elements'
 import './DNDLayout.css'
 
 export const DNDLayout = () => {
@@ -19,10 +18,6 @@ export const DNDLayout = () => {
 
   return (
     <section className="DNDContent">
-      <div className="searchWidget">
-        <SearchBarWithLogo />
-      </div>
-
       <button className="scrollToCardsLayout" onClick={() => onScrollToCardsLayoutClicked()}>
         Scroll for Dev News
         <BsChevronDown className="icon" />

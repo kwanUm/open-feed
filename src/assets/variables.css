@@ -19,7 +19,7 @@ html {
 
 html.dark {
   --app-name-text-color: #fff;
-  --background-color: #0d1116;
+  --background-color: #08090e;
   --primary-text-color: #fff;
   --primary-hover-text-color: #b1b1b1;
   --secondary-text-color: #a2a7ad;
@@ -34,47 +34,47 @@ html.dark {
   --scrollbar-accent-color: #6c6e71;
 
   /** Buttons **/
-  --button-background-color: #1c2026;
-  --button-hover-background-color: #181c21;
+  --button-background-color: #141a24;
+  --button-hover-background-color: #1b2233;
   --button-text-color: #fff;
   --button-hover-text-color: #d0d0d0;
 
   /**Card **/
-  --card-background-color: #0d1116;
+  --card-background-color: #0e1219;
   --card-header-text-color: #798595;
-  --card-header-background-color: #1c2026;
-  --card-border-color: #1f2429;
-  --card-content-divider: #1f2429;
-  --card-background-focus-color: #181c21;
+  --card-header-background-color: #141a24;
+  --card-border-color: #1e2538;
+  --card-content-divider: #181f2e;
+  --card-background-focus-color: #131822;
 
   /*Tag*/
-  --tag-background-color: #1c2026;
-  --tag-border-color: #1f2429;
+  --tag-background-color: #141a24;
+  --tag-border-color: #1e2538;
   --tag-text-color: #ffffff;
   --tag-secondary-color: #4d535a;
   --tag-input-background: #fff;
 
   /*Card Action button*/
-  --card-actions-background-shadow: #1c2026;
+  --card-actions-background-shadow: #141a24;
   --card-action-button-background: #798595;
   --card-action-button-color: #fff;
   --card-active-action-button-background: #fff;
   --card-active-action-button-color: #798595;
 
   /*Tooltip */
-  --tooltip-background-color: #252a31;
-  --tooltip-divider-color: #576172;
+  --tooltip-background-color: #141a24;
+  --tooltip-divider-color: #1e2538;
   --tooltip-text-color: #fff;
   --tooltip-shadow-color: #000000;
-  --tooltip-accent-color: #0366d6;
+  --tooltip-accent-color: #6366f1;
 
-  --placeholder-background-color: #1c2026;
+  --placeholder-background-color: #141a24;
 
-  --rsbs-bg: #0d1116;
-  --chip-background: #1c2026;
-  --chip-border-color: #1c2026;
+  --rsbs-bg: #0e1219;
+  --chip-background: #141a24;
+  --chip-border-color: #1e2538;
   --chip-text: #fff;
-  --chip-active-background: #0366d6;
+  --chip-active-background: #6366f1;
   --chip-active-text: #fff;
   --chip-delete-button-color: #fff;
 
@@ -90,20 +90,20 @@ html.dark {
   /*Tab*/
   --tab-title-color: white;
   --tab-description-color: rgb(212, 212, 212);
-  --tab-border-color: #1f2429;
+  --tab-border-color: #1e2538;
   --tab-neutral-button-background: none;
   --tab-neutral-button-text: #a2a7ad;
-  --tab-positive-button-background: #0366d6;
+  --tab-positive-button-background: #6366f1;
   --tab-positive-button-text: white;
 
-  --settings-input-background-color: #0d1116;
-  --settings-input-border-color: #3a4553;
-  --settings-input-border-focus-color: #6b7b90;
+  --settings-input-background-color: #0e1219;
+  --settings-input-border-color: #1e2538;
+  --settings-input-border-focus-color: #6366f1;
   --settings-input-placeholder-color: #42474e;
   --settings-input-text-color: #fff;
 
-  --horizontal-tabs-layout-active-color: white;
-  --horizontal-tabs-layout-text-color: #798595;
+  --horizontal-tabs-layout-active-color: #818cf8;
+  --horizontal-tabs-layout-text-color: #4b5875;
 }
 
 html.light {

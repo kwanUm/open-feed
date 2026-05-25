@@ -6,9 +6,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import {
   CardSettingsType,
   DNDDuration,
-  Layout,
   ListingMode,
-  SearchEngineType,
   SelectedCard,
   SupportedCardType,
   Theme,
@@ -16,7 +14,6 @@ import {
 
 export type UserPreferencesState = {
   userSelectedTags: Tag[]
-  layout: Layout
   theme: Theme
   openLinksNewTab: boolean
   onboardingCompleted: boolean
@@ -27,23 +24,18 @@ export type UserPreferencesState = {
   } | null
   occupation: string | null
   listingMode: ListingMode
-  promptEngine: string
-  promptEngines: SearchEngineType[]
   maxVisibleCards: number
   cards: SelectedCard[]
   cardsSettings: Record<string, CardSettingsType>
   firstSeenDate: number
   userCustomCards: SupportedCardType[]
-  advStatus: boolean
   DNDDuration: DNDDuration
   showReadPosts: boolean
   smoothScroll: boolean
 }
 
 type UserPreferencesStoreActions = {
-  setLayout: (layout: Layout) => void
   setTheme: (theme: Theme) => void
-  setPromptEngine: (engine: string) => void
   setOpenLinksNewTab: (openLinksNewTab: boolean) => void
   setListingMode: (listingMode: ListingMode) => void
   setCards: (selectedCards: SelectedCard[]) => void
@@ -60,9 +52,6 @@ type UserPreferencesStoreActions = {
   updateCardOrder: (prevIndex: number, newIndex: number) => void
   setDNDDuration: (value: DNDDuration) => void
   isDNDModeActive: () => boolean
-  addSearchEngine: (searchEngine: SearchEngineType) => void
-  removeSearchEngine: (searchEngineUrl: string) => void
-  setAdvStatus: (status: boolean) => void
   setShowReadPosts: (value: boolean) => void
   setSmoothScroll: (value: boolean) => void
 }
@@ -77,29 +66,23 @@ export const useUserPreferences = create(
         },
       ],
       occupation: null,
-      layout: 'cards',
       cardsSettings: {},
       maxVisibleCards: 4,
       theme: 'dark',
       onboardingCompleted: false,
-      promptEngine: 'chatgpt',
-      promptEngines: [],
       listingMode: 'normal',
       openLinksNewTab: true,
       firstSeenDate: Date.now(),
       cards: [
         { id: 0, name: 'github', type: 'supported' },
         { id: 1, name: 'hackernews', type: 'supported' },
-        { id: 2, name: 'ai', type: 'supported' },
-        { id: 3, name: 'producthunt', type: 'supported' },
+        { id: 2, name: 'devto', type: 'supported' },
+        { id: 3, name: 'reddit', type: 'supported' },
       ],
       userCustomCards: [],
       DNDDuration: 'never',
-      advStatus: false,
       showReadPosts: true,
       smoothScroll: false,
-      setLayout: (layout) => set({ layout }),
-      setPromptEngine: (promptEngine: string) => set({ promptEngine }),
       setListingMode: (listingMode: ListingMode) => set({ listingMode }),
       setTheme: (theme: Theme) => set({ theme }),
       setOpenLinksNewTab: (openLinksNewTab: boolean) => set({ openLinksNewTab }),
@@ -161,17 +144,6 @@ export const useUserPreferences = create(
           return false
         }
       },
-      addSearchEngine: (engine: SearchEngineType) =>
-        set((state) => {
-          return { promptEngines: [...state.promptEngines, engine] }
-        }),
-      removeSearchEngine: (engine: string) =>
-        set((state) => {
-          return {
-            promptEngines: state.promptEngines.filter((se) => se.url !== engine),
-          }
-        }),
-      setAdvStatus: (status) => set({ advStatus: status }),
       setShowReadPosts: (value) => set({ showReadPosts: value }),
       setSmoothScroll: (value) => set({ smoothScroll: value }),
       removeCard: (cardName: string) =>

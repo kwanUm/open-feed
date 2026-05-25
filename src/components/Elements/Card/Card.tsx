@@ -1,7 +1,5 @@
 import clsx from 'clsx'
-import React, { useEffect, useState } from 'react'
-import { AdvBanner } from 'src/features/adv'
-import { useAuth } from 'src/features/auth'
+import React from 'react'
 import { DesktopBreakpoint } from 'src/providers/DesktopBreakpoint'
 import { MobileBreakpoint } from 'src/providers/MobileBreakpoint'
 import { CardPropsType } from 'src/types'
@@ -14,42 +12,10 @@ type RootCardProps = CardPropsType & {
 }
 export const Card = React.forwardRef<HTMLDivElement, RootCardProps>(
   (
-    {
-      meta,
-      titleComponent,
-      settingsComponent,
-      className,
-      withAds = false,
-      children,
-      fullBlock = false,
-      knob,
-    },
+    { meta, titleComponent, settingsComponent, className, children, fullBlock = false, knob },
     ref
   ) => {
     const { icon, label, badge } = meta
-    const [canAdsLoad, setCanAdsLoad] = useState(true)
-    const { user } = useAuth()
-
-    useEffect(() => {
-      if (!withAds) {
-        return
-      }
-
-      const handleClassChange = () => {
-        if (document.documentElement.classList.contains('dndState')) {
-          setCanAdsLoad(false)
-        } else {
-          setCanAdsLoad(true)
-        }
-      }
-
-      const observer = new MutationObserver(handleClassChange)
-      observer.observe(document.documentElement, { attributes: true })
-
-      return () => {
-        observer.disconnect()
-      }
-    }, [withAds])
 
     return (
       <div ref={ref} className={clsx('block', fullBlock && 'fullBlock', className)}>
@@ -66,12 +32,6 @@ export const Card = React.forwardRef<HTMLDivElement, RootCardProps>(
           </DesktopBreakpoint>
           {badge && <span className="blockHeaderBadge">{badge}</span>}
         </div>
-
-        {canAdsLoad && withAds && !user?.isSupporter && (
-          <div className="ad-wrapper blockRow">
-            <AdvBanner />
-          </div>
-        )}
 
         <div className="blockContent scrollable">{children}</div>
       </div>

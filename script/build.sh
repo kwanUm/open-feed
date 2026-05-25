@@ -1,9 +1,8 @@
 #!/bin/bash
 
 build() {
-    echo 'Building Hackertab...'
+    echo 'Building OpenFeed...'
     rm -rf dist
-    tsc
     vite build "$@"
 }
 

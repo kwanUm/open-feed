@@ -58,6 +58,7 @@ export type LinkedinArticle = Article & {
   shares_count: number
   media_urls: string[]
   link_preview: LinkPreview | null
+  shared_post: SharedPost | null
 }
 
 export type QuotedTweet = {
@@ -65,6 +66,20 @@ export type QuotedTweet = {
   screen_name: string
   text: string
   image_url: string
+  media_urls: string[]
+}
+
+export type ThreadTweet = {
+  text: string
+  media_urls: string[]
+}
+
+export type SharedPost = {
+  author: string
+  author_title: string
+  text: string
+  avatar_url: string
+  media_urls: string[]
 }
 
 export type XcomArticle = Article & {
@@ -75,6 +90,7 @@ export type XcomArticle = Article & {
   bookmark_count: number
   media_urls: string[]
   quoted_tweet: QuotedTweet | null
+  thread_tweets: ThreadTweet[]
 }
 
 export type Product = BaseEntry & {
@@ -157,7 +173,6 @@ export type SupportedCardType = {
 
 export type CardPropsType = {
   meta: Omit<SupportedCardType, 'component'>
-  withAds: boolean
   knob?: React.ReactNode
   className?: string
 }

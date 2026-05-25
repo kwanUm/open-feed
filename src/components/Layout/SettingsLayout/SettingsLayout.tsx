@@ -18,10 +18,6 @@ export const SettingsLayout = () => {
       path: '/settings/bookmarks',
     },
     {
-      name: 'AI Prompt Engines',
-      path: '/settings/ai-engine',
-    },
-    {
       name: 'Settings',
       path: '/settings/general',
     },

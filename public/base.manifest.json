@@ -1,23 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "Hackertab.dev - developer news",
-  "description": "All developer news in one tab",
+  "name": "OpenFeed",
+  "description": "Your personal feed, served from your own browser",
   "version": "1.26.8",
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
   "permissions": ["cookies", "storage"],
   "host_permissions": [
-    "https://*.hackertab.dev/*",
     "https://www.linkedin.com/*",
-    "https://x.com/*"
+    "https://x.com/*",
+    "https://medium.com/*",
+    "https://hackernoon.com/*",
+    "https://www.freecodecamp.org/*",
+    "https://raw.githubusercontent.com/*",
+    "https://lobste.rs/*"
   ],
   "content_scripts": [
-    {
-      "matches": ["https://hackertab.dev/*"],
-      "run_at": "document_start",
-      "js": ["content.js"]
-    },
     {
       "matches": ["https://x.com/*"],
       "run_at": "document_start",
@@ -31,8 +30,8 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["auth.js", "content-xcom-inject.js"],
-      "matches": ["https://hackertab.dev/*", "https://x.com/*"]
+      "resources": ["content-xcom-inject.js"],
+      "matches": ["https://x.com/*"]
     }
   ],
   "icons": {

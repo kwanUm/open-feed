@@ -77,7 +77,7 @@ export const BookmarkSettings = () => {
     const downloadURL = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = downloadURL
-    link.download = 'hackertabBookmarks'
+    link.download = 'openfeedBookmarks'
     link.click()
   }
 

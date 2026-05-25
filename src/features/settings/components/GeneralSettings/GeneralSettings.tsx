@@ -12,12 +12,9 @@ import {
   trackThemeSelect,
 } from 'src/lib/analytics'
 import { useUserPreferences } from 'src/stores/preferences'
-import { DeleteAccount } from '../UserSettings/DeleteAccount'
-import { UserInfo } from '../UserSettings/UserInfo'
 import { CardsNumberSettings } from './CardsNumberSettings'
 import { DNDSettings } from './DNDSettings'
 import './generalSettings.css'
-import { LayoutSettings } from './LayoutSettings'
 
 export const GeneralSettings = () => {
   const {
@@ -67,8 +64,6 @@ export const GeneralSettings = () => {
         'Customize your experience by selecting the number of cards you want to see, the search engine you want to use and more.'
       }>
       <div>
-        <UserInfo />
-        <LayoutSettings />
         <CardsNumberSettings />
 
         <div className="settingRow">
@@ -115,8 +110,6 @@ export const GeneralSettings = () => {
         </div>
 
         <DNDSettings />
-
-        <DeleteAccount />
 
         <Footer />
       </div>

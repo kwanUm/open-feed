@@ -27,10 +27,9 @@ import { SelectedCard, SupportedCardType } from 'src/types'
 type SortableItemProps = {
   id: string
   card: SupportedCardType
-  withAds: boolean
 }
 
-const SortableItem = ({ id, card, withAds }: SortableItemProps) => {
+const SortableItem = ({ id, card }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, isDragging, transform, transition } = useSortable({
     id,
   })
@@ -47,7 +46,6 @@ const SortableItem = ({ id, card, withAds }: SortableItemProps) => {
       <Component
         meta={card}
         className={clsx(isDragging && 'draggedBlock')}
-        withAds={withAds}
         knob={
           <DesktopBreakpoint>
             <button className="blockHeaderDragButton" {...attributes} {...listeners}>
@@ -128,8 +126,8 @@ export const DesktopCards = ({
         <SortableContext
           items={memoCards.map(({ id }) => id)}
           strategy={horizontalListSortingStrategy}>
-          {memoCards.map(({ id, card }, index) => {
-            return <SortableItem key={id} id={id} card={card} withAds={index === 0} />
+          {memoCards.map(({ id, card }) => {
+            return <SortableItem key={id} id={id} card={card} />
           })}
         </SortableContext>
       </DndContext>

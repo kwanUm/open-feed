@@ -1,12 +1,9 @@
-import { CgIndieHackers } from 'react-icons/cg'
 import { FaDev, FaFreeCodeCamp, FaMediumM, FaReddit } from 'react-icons/fa'
 import { FaLinkedin, FaXTwitter } from 'react-icons/fa6'
-import { HiSparkles, HiTicket } from 'react-icons/hi'
-import { SiGithub, SiProducthunt, SiYcombinator } from 'react-icons/si'
+import { HiTicket } from 'react-icons/hi'
+import { SiGithub, SiYcombinator } from 'react-icons/si'
 import HackernoonIcon from 'src/assets/icon_hackernoon.jpeg'
-import HashNodeIcon from 'src/assets/icon_hashnode.png'
 import LobstersIcon from 'src/assets/icon_lobsters.png'
-import { AICard } from 'src/features/cards/components/aiCard'
 import { SupportedCardType } from 'src/types'
 import { lazyImport } from 'src/utils/lazyImport'
 const { MediumCard } = lazyImport(() => import('src/features/cards'), 'MediumCard')
@@ -15,10 +12,7 @@ const { DevtoCard } = lazyImport(() => import('src/features/cards'), 'DevtoCard'
 const { FreecodecampCard } = lazyImport(() => import('src/features/cards'), 'FreecodecampCard')
 const { GithubCard } = lazyImport(() => import('src/features/cards'), 'GithubCard')
 const { HackernewsCard } = lazyImport(() => import('src/features/cards'), 'HackernewsCard')
-const { HashnodeCard } = lazyImport(() => import('src/features/cards'), 'HashnodeCard')
-const { IndiehackersCard } = lazyImport(() => import('src/features/cards'), 'IndiehackersCard')
 const { LobstersCard } = lazyImport(() => import('src/features/cards'), 'LobstersCard')
-const { ProductHuntCard } = lazyImport(() => import('src/features/cards'), 'ProductHuntCard')
 const { RedditCard } = lazyImport(() => import('src/features/cards'), 'RedditCard')
 const { HackernoonCard } = lazyImport(() => import('src/features/cards'), 'HackernoonCard')
 const { LinkedinCard } = lazyImport(() => import('src/features/cards'), 'LinkedinCard')
@@ -62,15 +56,6 @@ export const SUPPORTED_CARDS: SupportedCardType[] = [
     type: 'supported',
   },
   {
-    value: 'producthunt',
-    icon: <SiProducthunt color="#D65736" />,
-    analyticsTag: 'producthunt',
-    label: 'Product Hunt',
-    component: ProductHuntCard,
-    link: 'https://producthunt.com/',
-    type: 'supported',
-  },
-  {
     value: 'reddit',
     icon: <FaReddit color="#FF4500" />,
     analyticsTag: 'reddit',
@@ -89,30 +74,12 @@ export const SUPPORTED_CARDS: SupportedCardType[] = [
     type: 'supported',
   },
   {
-    value: 'hashnode',
-    icon: <img alt="hn" src={HashNodeIcon} />,
-    analyticsTag: 'hashnode',
-    label: 'Hashnode',
-    component: HashnodeCard,
-    link: 'https://hashnode.com/',
-    type: 'supported',
-  },
-  {
     value: 'freecodecamp',
     icon: <FaFreeCodeCamp className="blockHeaderWhite" />,
     analyticsTag: 'freecodecamp',
     label: 'FreeCodeCamp',
     component: FreecodecampCard,
     link: 'https://freecodecamp.com/news',
-    type: 'supported',
-  },
-  {
-    value: 'indiehackers',
-    icon: <CgIndieHackers className="blockHeaderWhite" />,
-    analyticsTag: 'indiehackers',
-    label: 'IndieHackers',
-    component: IndiehackersCard,
-    link: 'https://indiehackers.com/',
     type: 'supported',
   },
   {
@@ -123,15 +90,6 @@ export const SUPPORTED_CARDS: SupportedCardType[] = [
     component: MediumCard,
     link: 'https://medium.com/',
     type: 'supported',
-  },
-  {
-    value: 'ai',
-    icon: <HiSparkles color="#F1D247" />,
-    analyticsTag: 'ai',
-    label: 'Powered by AI',
-    component: AICard,
-    type: 'supported',
-    link: 'https://hackertab.dev/',
   },
   {
     value: 'hackernoon',

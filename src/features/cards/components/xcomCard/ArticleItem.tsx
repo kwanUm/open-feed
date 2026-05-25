@@ -28,6 +28,11 @@ const ArticleItem = (props: Props) => {
 
   const buildPostText = () => {
     const parts = [`${item.title} (@${item.screen_name})`]
+    if (item.thread_tweets?.length > 0) {
+      for (const t of item.thread_tweets) {
+        parts.push(t.text)
+      }
+    }
     if (item.description) parts.push(item.description)
     if (item.quoted_tweet) {
       parts.push(`> ${item.quoted_tweet.author} (@${item.quoted_tweet.screen_name}):\n> ${item.quoted_tweet.text}`)
@@ -110,6 +115,22 @@ const ArticleItem = (props: Props) => {
                       show less
                     </span>
                   </div>
+                  {item.thread_tweets?.length > 0 && (
+                    <div className="rowThread">
+                      {item.thread_tweets.map((t, i) => (
+                        <div key={i} className="rowThreadTweet" dir="auto">
+                          <div className="rowThreadTweetText">{t.text}</div>
+                          {t.media_urls?.length > 0 && (
+                            <div className="rowMediaGallery">
+                              {t.media_urls.map((url, j) => (
+                                <img key={j} src={url} className="rowMediaImage" alt="" />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <div dir="auto">{item.description}</div>
                   {item.media_urls?.length > 0 && (
                     <div className="rowMediaGallery">
@@ -130,6 +151,13 @@ const ArticleItem = (props: Props) => {
                         </span>
                       </div>
                       <p className="rowQuotedTweetText">{item.quoted_tweet.text}</p>
+                      {item.quoted_tweet.media_urls?.length > 0 && (
+                        <div className="rowMediaGallery">
+                          {item.quoted_tweet.media_urls.map((url, i) => (
+                            <img key={i} src={url} className="rowMediaImage" alt="" />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -139,6 +167,9 @@ const ArticleItem = (props: Props) => {
                   dir="auto"
                   onClick={(e) => { e.stopPropagation(); onToggleExpand(item.id) }}
                   style={{ cursor: 'pointer' }}>
+                  {item.thread_tweets?.length > 0 && (
+                    <span className="rowThreadBadge">Thread ({item.thread_tweets.length + 1})</span>
+                  )}
                   {item.description?.substring(0, 280)}
                   {item.description && item.description.length > 280 ? '...' : ''}
                 </p>
