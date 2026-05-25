@@ -2,6 +2,8 @@
 
 A new-tab browser extension that replaces your blank tab with a feed reader **that runs entirely inside your browser** — no backend, no account, no telemetry.
 
+![OpenFeed screenshot](demo/screenshot.jpeg)
+
 ## The premise
 
 Most feed readers route everything through a server: that's where they fetch your sources, parse the HTML, dedupe items, run filtering, and serve them back. That server sees everything you read.
