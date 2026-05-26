@@ -635,6 +635,63 @@ async function fetchLinkedinFullProfile() {
   return { name, headline, summary, positions, skills }
 }
 
+async function callClaudeViaSession(prompt) {
+  const headers = { 'Content-Type': 'application/json' }
+
+  // Get org ID from the organizations endpoint
+  const orgResp = await fetch('https://claude.ai/api/organizations', { credentials: 'include', headers })
+  if (orgResp.status === 401 || orgResp.status === 403) throw new Error('Not logged into claude.ai')
+  if (!orgResp.ok) throw new Error(`claude.ai API error: ${orgResp.status}`)
+  const orgs = await orgResp.json()
+  const orgId = Array.isArray(orgs) ? orgs[0]?.uuid : orgs?.account?.memberships?.[0]?.organization?.uuid
+  if (!orgId) throw new Error('No Claude organization found — are you logged into claude.ai?')
+
+  // Create a temporary conversation
+  const convId = crypto.randomUUID()
+  const createResp = await fetch(`https://claude.ai/api/organizations/${orgId}/chat_conversations`, {
+    method: 'POST', credentials: 'include', headers,
+    body: JSON.stringify({ uuid: convId, name: '' }),
+  })
+  if (!createResp.ok) throw new Error(`Failed to create conversation: ${createResp.status}`)
+
+  // Send message and stream response
+  const completionResp = await fetch(`https://claude.ai/api/organizations/${orgId}/chat_conversations/${convId}/completion`, {
+    method: 'POST', credentials: 'include', headers,
+    body: JSON.stringify({ prompt, timezone: 'UTC', attachments: [], files: [] }),
+  })
+  if (!completionResp.ok) throw new Error(`Completion failed: ${completionResp.status}`)
+
+  // Parse SSE stream
+  const reader = completionResp.body.getReader()
+  const decoder = new TextDecoder()
+  let fullText = ''
+  let buffer = ''
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() || ''
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue
+      const raw = line.slice(6).trim()
+      if (raw === '[DONE]') continue
+      try {
+        const parsed = JSON.parse(raw)
+        if (typeof parsed.completion === 'string') fullText += parsed.completion
+        if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') fullText += parsed.delta.text || ''
+      } catch {}
+    }
+  }
+
+  // Clean up the conversation
+  fetch(`https://claude.ai/api/organizations/${orgId}/chat_conversations/${convId}`, {
+    method: 'DELETE', credentials: 'include',
+  }).catch(() => {})
+
+  return fullText
+}
+
 // --- Message handler ---
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -646,31 +703,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === 'FETCH_LINKEDIN_FULL_PROFILE') {
+    // Release the port immediately — MV3 service workers get killed during long fetches.
+    // Result is written to storage; HelloTab listens for the change.
+    sendResponse({ ok: true })
     fetchLinkedinFullProfile()
-      .then(sendResponse)
-      .catch((e) => sendResponse({ error: e.message }))
-    return true
+      .then((result) => chrome.storage.local.set({ linkedin_profile_result: result }))
+      .catch((e) => chrome.storage.local.set({ linkedin_profile_result: { error: e.message } }))
+    return false
   }
 
   if (message.type === 'OPEN_CLAUDE_TAB') {
-    chrome.storage.local.set({ claude_linkedin_prompt: message.prompt }, () => {
-      // Open off-screen so the user never sees it; content-claude.js runs inside it
-      chrome.windows.create({
-        url: 'https://claude.ai/new',
-        type: 'popup',
-        left: -3000,
-        top: 0,
-        width: 1280,
-        height: 900,
-        focused: false,
-      })
-    })
     sendResponse({ ok: true })
-    return true
-  }
-
-  if (message.type === 'CLOSE_CLAUDE_TAB') {
-    if (sender.tab?.id) chrome.tabs.remove(sender.tab.id)
+    callClaudeViaSession(message.prompt)
+      .then((text) => {
+        const match = text.match(/\{[^{}]*"role"\s*:\s*"[^"]*"[^{}]*\}/)
+        if (!match) { chrome.storage.local.set({ claude_inferred_role: { error: 'No JSON in response' } }); return }
+        try { chrome.storage.local.set({ claude_inferred_role: JSON.parse(match[0]) }) }
+        catch { chrome.storage.local.set({ claude_inferred_role: { error: 'Failed to parse response' } }) }
+      })
+      .catch((e) => chrome.storage.local.set({ claude_inferred_role: { error: e.message } }))
     return false
   }
 
@@ -693,6 +744,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       xcom_bearer_token: message.bearerToken,
       xcom_query_id: message.queryId,
     })
+  }
+
+  if (message.type === 'FETCH_LOBSTERS') {
+    fetch(message.url, { headers: { 'Accept': 'application/json' } })
+      .then((r) => { if (!r.ok) throw new Error(`Lobsters API error: ${r.status}`); return r.json() })
+      .then((data) => sendResponse({ data }))
+      .catch((e) => sendResponse({ error: e.message }))
+    return true
   }
 
   if (message.type === 'FETCH_RSS_FEED') {

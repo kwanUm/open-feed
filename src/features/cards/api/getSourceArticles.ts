@@ -78,23 +78,28 @@ const fetchReddit = async (tags: string[]): Promise<Article[]> => {
 
 // --- Lobsters (public JSON API) ---
 
-const fetchLobsters = async (tags: string[]): Promise<Article[]> => {
+const fetchLobsters = (tags: string[]): Promise<Article[]> => {
   const tag = tags.find((t) => t && t !== 'global')
   const url = tag ? `https://lobste.rs/t/${encodeURIComponent(tag)}.json` : 'https://lobste.rs/hottest.json'
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`Lobsters API error: ${res.status}`)
-  const data = await res.json()
-  return data.slice(0, 25).map((it: any) => ({
-    id: it.short_id,
-    title: it.title,
-    url: it.url || it.short_id_url,
-    source: 'lobsters',
-    tags: it.tags || [],
-    comments_count: it.comment_count || 0,
-    points_count: it.score || 0,
-    image_url: '',
-    published_at: new Date(it.created_at).getTime(),
-  }))
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: 'FETCH_LOBSTERS', url }, (res) => {
+      if (chrome.runtime.lastError) return reject(new Error(chrome.runtime.lastError.message))
+      if (res?.error) return reject(new Error(res.error))
+      resolve(
+        (res.data as any[]).slice(0, 25).map((it) => ({
+          id: it.short_id,
+          title: it.title,
+          url: it.url || it.short_id_url,
+          source: 'lobsters',
+          tags: it.tags || [],
+          comments_count: it.comment_count || 0,
+          points_count: it.score || 0,
+          image_url: '',
+          published_at: new Date(it.created_at).getTime(),
+        }))
+      )
+    })
+  })
 }
 
 // --- RSS via background.js (for CORS-restricted sources) ---

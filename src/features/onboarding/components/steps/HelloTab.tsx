@@ -133,9 +133,15 @@ export const HelloTab = () => {
     if (typeof chrome === 'undefined' || !chrome?.storage) return
 
     const listener = (changes: Record<string, chrome.storage.StorageChange>) => {
-      if (!changes.claude_inferred_role) return
+      if (!changes.claude_inferred_role?.newValue) return
       const parsed = changes.claude_inferred_role.newValue
-      if (!parsed?.role) return
+      chrome.storage.local.remove('claude_inferred_role')
+      if (parsed.error) {
+        setAnalyzeError(`Claude error: ${parsed.error}. Please choose manually.`)
+        setStep('manual')
+        return
+      }
+      if (!parsed.role) return
       const occ = OCCUPATIONS.find((o) => o.value === parsed.role) || OCCUPATIONS.find((o) => o.value === 'other')!
       const sources = Array.isArray(parsed.sources) ? parsed.sources.filter((s: string) => VALID_SOURCES.includes(s)) : occ.sources
       const tagValues = Array.isArray(parsed.tags) ? parsed.tags : occ.tags
@@ -143,7 +149,6 @@ export const HelloTab = () => {
       setDetectedSources(sources.length ? sources : occ.sources)
       setDetectedTagValues(tagValues.length ? tagValues : occ.tags)
       setStep('detected')
-      chrome.storage.local.remove('claude_inferred_role')
     }
 
     chrome.storage.onChanged.addListener(listener)
@@ -165,11 +170,15 @@ export const HelloTab = () => {
     markOnboardingAsCompleted()
   }
 
-  const handleLinkedinClaude = async () => {
-    setAnalyzeError('')
-    setStep('fetching')
-    try {
-      const profile = await sendMessageToBackground('FETCH_LINKEDIN_FULL_PROFILE')
+  // Listen for LinkedIn profile result written to storage by background.js
+  useEffect(() => {
+    if (step !== 'fetching') return
+    if (typeof chrome === 'undefined' || !chrome?.storage) return
+
+    const listener = (changes: Record<string, chrome.storage.StorageChange>) => {
+      if (!changes.linkedin_profile_result?.newValue) return
+      const profile = changes.linkedin_profile_result.newValue
+      chrome.storage.local.remove('linkedin_profile_result')
       if (profile?.error) {
         setAnalyzeError(
           profile.error === 'NOT_LOGGED_IN'
@@ -180,10 +189,25 @@ export const HelloTab = () => {
         return
       }
       const prompt = buildClaudePrompt(profile)
-      await sendMessageToBackground('OPEN_CLAUDE_TAB', { prompt })
-      setStep('waiting-claude')
+      sendMessageToBackground('OPEN_CLAUDE_TAB', { prompt })
+        .then(() => setStep('waiting-claude'))
+        .catch((e: any) => {
+          setAnalyzeError(`Error: ${e.message}. Please choose manually.`)
+          setStep('manual')
+        })
+    }
+
+    chrome.storage.onChanged.addListener(listener)
+    return () => chrome.storage.onChanged.removeListener(listener)
+  }, [step])
+
+  const handleLinkedinClaude = async () => {
+    setAnalyzeError('')
+    try {
+      await sendMessageToBackground('FETCH_LINKEDIN_FULL_PROFILE')
+      setStep('fetching')
     } catch (e: any) {
-      setAnalyzeError('Failed to fetch LinkedIn profile. Please choose manually.')
+      setAnalyzeError(`Error: ${e.message}. Please choose manually.`)
       setStep('manual')
     }
   }
