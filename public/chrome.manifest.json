@@ -2,5 +2,8 @@
   "background": {
     "service_worker": "background.js"
   },
-  "action": {}
+  "action": {
+    "default_popup": "digest-popup.html",
+    "default_title": "OpenFeed daily digest"
+  }
 }

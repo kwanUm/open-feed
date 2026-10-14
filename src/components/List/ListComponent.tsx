@@ -1,4 +1,5 @@
-import React, { memo, ReactNode, useMemo } from 'react'
+import React, { memo, ReactNode, useEffect, useMemo } from 'react'
+import { useCardItems } from 'src/components/Elements/Card/CardItemsContext'
 import { Placeholder } from 'src/components/placeholders'
 import { MAX_ITEMS_PER_CARD } from 'src/config'
 import { useUserPreferences } from 'src/stores/preferences'
@@ -76,13 +77,24 @@ export function ListComponent<T extends any>(props: ListComponentPropsType<T>) {
     return result
   }, [sortBy, sortFn, filteredItems])
 
+  // Exactly what ends up on screen: filtered, sorted, then capped.
+  const visibleItems = useMemo(() => sortedData.slice(0, limit), [sortedData, limit])
+
+  // Publish the rendered items so the card header's "copy all" button can read
+  // them without every card having to thread its data through by hand.
+  const cardItems = useCardItems()
+  const registerItems = cardItems?.registerItems
+  useEffect(() => {
+    registerItems?.(visibleItems)
+  }, [registerItems, visibleItems])
+
   const enrichedItems = useMemo(() => {
-    if (!sortedData || sortedData.length === 0) {
+    if (visibleItems.length === 0) {
       return []
     }
 
     try {
-      return sortedData.slice(0, limit).map((item, index) => {
+      return visibleItems.map((item, index) => {
         let content: ReactNode[] = [renderItem(item, index)]
         if (header && index === 0) {
           content.unshift(header)
@@ -93,7 +105,7 @@ export function ListComponent<T extends any>(props: ListComponentPropsType<T>) {
     } catch (e) {
       return []
     }
-  }, [sortedData, header, renderItem, limit])
+  }, [visibleItems, header, renderItem])
 
   if (isLoading) {
     return <Placeholders placeholder={placeholder} />

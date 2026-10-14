@@ -6,7 +6,11 @@
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  "permissions": ["cookies", "storage"],
+  "permissions": [
+    "alarms",
+    "cookies",
+    "storage"
+  ],
   "host_permissions": [
     "https://www.linkedin.com/*",
     "https://x.com/*",
@@ -14,24 +18,42 @@
     "https://hackernoon.com/*",
     "https://www.freecodecamp.org/*",
     "https://raw.githubusercontent.com/*",
-    "https://lobste.rs/*"
+    "https://lobste.rs/*",
+    "https://cdn.syndication.twimg.com/*",
+    "https://pbs.twimg.com/*",
+    "https://video.twimg.com/*",
+    "https://abs.twimg.com/*",
+    "https://t.co/*",
+    "https://media.licdn.com/*"
   ],
   "content_scripts": [
     {
-      "matches": ["https://x.com/*"],
+      "matches": [
+        "https://x.com/*"
+      ],
       "run_at": "document_start",
-      "js": ["content-xcom.js"]
+      "js": [
+        "content-xcom.js"
+      ]
     },
     {
-      "matches": ["https://claude.ai/*"],
+      "matches": [
+        "https://claude.ai/*"
+      ],
       "run_at": "document_idle",
-      "js": ["content-claude.js"]
+      "js": [
+        "content-claude.js"
+      ]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["content-xcom-inject.js"],
-      "matches": ["https://x.com/*"]
+      "resources": [
+        "content-xcom-inject.js"
+      ],
+      "matches": [
+        "https://x.com/*"
+      ]
     }
   ],
   "icons": {

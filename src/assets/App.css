@@ -1858,3 +1858,115 @@ Modal
     display: block;
   }
 }
+
+/* "Copy all posts" control in the card header (desktop) */
+.blockHeaderCopyButton {
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: #96a2ae;
+  cursor: pointer;
+  display: flex;
+  font-size: 1.2em;
+  justify-content: center;
+  opacity: 0;
+  padding: 0;
+  transition: opacity 0.2s linear;
+}
+
+.blockHeader:hover .blockHeaderCopyButton {
+  opacity: 1;
+}
+
+.blockHeaderCopyButton:focus-visible {
+  opacity: 1;
+}
+
+.blockHeaderCopyButton:disabled {
+  cursor: not-allowed;
+  opacity: 0;
+}
+
+.blockHeader:hover .blockHeaderCopyButton:disabled {
+  opacity: 0.35;
+}
+
+/* Mobile: stacked above the existing filter action button */
+.floatingCopy {
+  align-items: center;
+  background-color: rgb(44, 128, 232);
+  border-radius: 48px;
+  border: transparent;
+  bottom: 124px;
+  box-shadow: 0 2px 8px var(--card-actions-background-shadow);
+  display: flex;
+  height: 48px;
+  justify-content: center;
+  position: fixed;
+  right: 16px;
+  width: 48px;
+  z-index: 2;
+}
+
+.floatingCopy:disabled {
+  display: none;
+}
+
+/* "Export bundle" control in the card header (desktop) */
+.blockHeaderExportButton {
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: #96a2ae;
+  cursor: pointer;
+  display: flex;
+  font-size: 1.2em;
+  justify-content: center;
+  opacity: 0;
+  padding: 0;
+  transition: opacity 0.2s linear;
+}
+
+.blockHeader:hover .blockHeaderExportButton {
+  opacity: 1;
+}
+
+.blockHeaderExportButton:focus-visible {
+  opacity: 1;
+}
+
+.blockHeaderExportButton:disabled {
+  cursor: not-allowed;
+  opacity: 0;
+}
+
+.blockHeader:hover .blockHeaderExportButton:disabled {
+  opacity: 0.35;
+}
+
+.blockHeaderExportProgress {
+  font-size: 0.6em;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+/* Mobile: stacked above the copy action button */
+.floatingExport {
+  align-items: center;
+  background-color: rgb(44, 128, 232);
+  border-radius: 48px;
+  border: transparent;
+  bottom: 180px;
+  box-shadow: 0 2px 8px var(--card-actions-background-shadow);
+  display: flex;
+  height: 48px;
+  justify-content: center;
+  position: fixed;
+  right: 16px;
+  width: 48px;
+  z-index: 2;
+}
+
+.floatingExport:disabled {
+  display: none;
+}

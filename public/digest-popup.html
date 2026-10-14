@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        width: 320px;
+        margin: 0;
+        padding: 14px;
+        font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #ffffff;
+        color: #16181c;
+      }
+      @media (prefers-color-scheme: dark) {
+        body { background: #16181c; color: #e7e9ea; }
+        .meta { color: #8b98a5 !important; }
+        .row { border-color: #2f3336 !important; }
+        button.secondary { color: #8b98a5 !important; }
+      }
+      h1 { font-size: 13px; margin: 0 0 10px; font-weight: 600; }
+      button {
+        width: 100%;
+        padding: 9px;
+        font: inherit;
+        font-weight: 600;
+        border: 0;
+        border-radius: 999px;
+        background: #1d9bf0;
+        color: #fff;
+        cursor: pointer;
+      }
+      button:disabled { opacity: 0.55; cursor: default; }
+      button.secondary {
+        background: none;
+        color: #536471;
+        font-weight: 400;
+        margin-top: 4px;
+        padding: 4px;
+      }
+      .row { margin-top: 12px; padding-top: 10px; border-top: 1px solid #eff3f4; }
+      .meta { color: #536471; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
+      .label { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+      .ok { color: #00ba7c; }
+      .bad { color: #f4212e; }
+    </style>
+  </head>
+  <body>
+    <h1>OpenFeed daily digest</h1>
+    <button id="run">Run digest now</button>
+    <div id="live" class="meta" style="margin-top: 8px"></div>
+
+    <div class="row">
+      <div class="label">Next scheduled run</div>
+      <div id="next" class="meta">…</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Last run</div>
+      <div id="last" class="meta">…</div>
+    </div>
+
+    <button id="open" class="secondary">Open OpenFeed</button>
+    <script src="digest-popup.js"></script>
+  </body>
+</html>
