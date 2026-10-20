@@ -86,8 +86,9 @@ async function fetchLinkedinFeed() {
   const allElements = [...(data1.elements || []), ...(data2.elements || [])]
 
   const articles = allElements
-    .filter((el) => el.actor?.description?.text !== 'Promoted')
     .map((el) => {
+      const subDesc = el.actor?.subDescription?.accessibilityText || ''
+      const isPromoted = subDesc === 'Promoted' || subDesc.startsWith('Promoted by')
       const shareAction = el.updateMetadata?.updateActions?.actions?.find(
         (a) => a.actionType === 'SHARE_VIA'
       )
@@ -228,6 +229,7 @@ async function fetchLinkedinFeed() {
         media_urls: mediaUrls,
         link_preview: linkPreview,
         shared_post: sharedPost,
+        promoted: isPromoted,
       }
     })
     .filter(Boolean)
@@ -1429,6 +1431,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'FETCH_LOBSTERS') {
     fetch(message.url, { headers: { 'Accept': 'application/json' } })
       .then((r) => { if (!r.ok) throw new Error(`Lobsters API error: ${r.status}`); return r.json() })
+      .then((data) => sendResponse({ data }))
+      .catch((e) => sendResponse({ error: e.message }))
+    return true
+  }
+
+  if (message.type === 'FETCH_REDDIT') {
+    fetch(message.url, { headers: { 'Accept': 'application/json' } })
+      .then((r) => { if (!r.ok) throw new Error(`Reddit API error: ${r.status}`); return r.json() })
       .then((data) => sendResponse({ data }))
       .catch((e) => sendResponse({ error: e.message }))
     return true

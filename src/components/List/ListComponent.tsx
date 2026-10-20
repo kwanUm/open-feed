@@ -62,6 +62,14 @@ export function ListComponent<T extends any>(props: ListComponentPropsType<T>) {
 
   const sortedData = useMemo(() => {
     if (!filteredItems || filteredItems.length == 0) return []
+
+    if ((sortBy as string) === 'top_today') {
+      const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000
+      return [...filteredItems]
+        .filter((item: any) => typeof item.published_at === 'number' && item.published_at >= oneDayAgo)
+        .sort((a: any, b: any) => (b.points_count ?? 0) - (a.points_count ?? 0))
+    }
+
     if (!sortBy) return filteredItems
 
     const result = sortFn
@@ -130,6 +138,10 @@ export function ListComponent<T extends any>(props: ListComponentPropsType<T>) {
         <p>Check back later for fresh content.</p>
       </div>
     )
+  }
+
+  if (items && items.length > 0 && sortedData.length === 0) {
+    return <p className="errorMsg">No posts from the last 24 hours.</p>
   }
 
   return <>{enrichedItems}</>

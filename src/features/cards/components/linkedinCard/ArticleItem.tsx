@@ -45,7 +45,10 @@ const ArticleItem = (props: Props) => {
     })
   }
 
+  const isPromoted = item.time_ago?.startsWith('Promoted') || item.author_title === 'Promoted'
+
   return (
+    <div style={isPromoted ? { opacity: 0.45 } : undefined}>
     <CardItemWithActions
       source={analyticsTag}
       item={item}
@@ -177,6 +180,7 @@ const ArticleItem = (props: Props) => {
         </>
       }
     />
+    </div>
   )
 }
 

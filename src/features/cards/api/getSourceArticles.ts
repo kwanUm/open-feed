@@ -52,27 +52,30 @@ const fetchDevto = async (tags: string[]): Promise<Article[]> => {
 
 // --- Reddit (public JSON API) ---
 
-const fetchReddit = async (tags: string[]): Promise<Article[]> => {
+const fetchReddit = (tags: string[]): Promise<Article[]> => {
   const sub = tags.find((t) => t && t !== 'global') || 'programming'
-  const res = await fetch(
-    `https://www.reddit.com/r/${encodeURIComponent(sub)}/hot.json?limit=25`,
-    { headers: { Accept: 'application/json' } }
-  )
-  if (!res.ok) throw new Error(`Reddit API error: ${res.status}`)
-  const json = await res.json()
-  return (json.data?.children || []).map((child: any) => {
-    const d = child.data
-    return {
-      id: d.id,
-      title: d.title,
-      url: d.url?.startsWith('https://www.reddit.com') ? d.url : (d.url || `https://www.reddit.com${d.permalink}`),
-      source: 'reddit',
-      tags: [],
-      comments_count: d.num_comments || 0,
-      points_count: d.score || 0,
-      image_url: d.thumbnail?.startsWith('http') ? d.thumbnail : '',
-      published_at: d.created_utc * 1000,
-    }
+  const url = `https://www.reddit.com/r/${encodeURIComponent(sub)}/hot.json?limit=25`
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: 'FETCH_REDDIT', url }, (res) => {
+      if (chrome.runtime.lastError) return reject(new Error(chrome.runtime.lastError.message))
+      if (res?.error) return reject(new Error(res.error))
+      resolve(
+        (res.data?.children || []).map((child: any) => {
+          const d = child.data
+          return {
+            id: d.id,
+            title: d.title,
+            url: d.url?.startsWith('https://www.reddit.com') ? d.url : (d.url || `https://www.reddit.com${d.permalink}`),
+            source: 'reddit',
+            tags: [],
+            comments_count: d.num_comments || 0,
+            points_count: d.score || 0,
+            image_url: d.thumbnail?.startsWith('http') ? d.thumbnail : '',
+            published_at: d.created_utc * 1000,
+          }
+        })
+      )
+    })
   })
 }
 

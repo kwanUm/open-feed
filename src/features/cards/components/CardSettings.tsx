@@ -6,7 +6,7 @@ import { FiFilter } from 'react-icons/fi'
 import { GoGear } from 'react-icons/go'
 import { IoTrashBinOutline } from 'react-icons/io5'
 import { LiaSortSolid } from 'react-icons/lia'
-import { MdDateRange } from 'react-icons/md'
+import { MdDateRange, MdTrendingUp } from 'react-icons/md'
 import { useMediaQuery } from 'react-responsive'
 import { ref } from 'src/config'
 import { useUserPreferences } from 'src/stores/preferences'
@@ -27,7 +27,10 @@ type CardSettingsProps = {
   sortOptions?: ((defaults: SortOption[]) => SortOption[]) | SortOption[]
 }
 
-const DEFAULT_SORT_OPTIONS = [{ label: 'Newest', value: 'published_at', icon: <MdDateRange /> }]
+const DEFAULT_SORT_OPTIONS = [
+  { label: 'Newest', value: 'published_at', icon: <MdDateRange /> },
+  { label: 'Top today', value: 'top_today', icon: <MdTrendingUp /> },
+]
 const SPECIAL_LABELS = ['global', MY_LANGUAGES_OPTION.label.toLowerCase()]
 
 const CardSettings = ({

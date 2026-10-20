@@ -59,6 +59,7 @@ export type LinkedinArticle = Article & {
   media_urls: string[]
   link_preview: LinkPreview | null
   shared_post: SharedPost | null
+  promoted?: boolean
 }
 
 export type QuotedTweet = {
@@ -193,6 +194,7 @@ export type CardSettingsType = {
   language?: string
   sortBy: string
   dateRange?: string
+  hidePromoted?: boolean
 }
 
 export type Option = {
