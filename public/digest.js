@@ -13,7 +13,7 @@
 
 // Bump on every change here. Printed on load so a stale unpacked build is
 // obvious from the console instead of being inferred from symptoms.
-const DIGEST_VERSION = 9
+const DIGEST_VERSION = 10
 console.log('[OpenFeed] digest v' + DIGEST_VERSION + ' (toolbar popup)')
 
 const DIGEST_ALARM = 'openfeed-daily-digest'
@@ -176,10 +176,13 @@ async function buildDigestBundle(kind) {
   const label = kind === 'xcom' ? 'X.com Feed' : 'LinkedIn Feed'
   const sourceUrl = kind === 'xcom' ? 'https://x.com/' : 'https://linkedin.com/'
 
-  const items = kind === 'xcom' ? await fetchXcomFeed() : await fetchLinkedinFeed()
-  if (!Array.isArray(items)) {
-    throw new Error(items?.error || `${label}: feed fetch returned no items`)
+  const fetched = kind === 'xcom' ? await fetchXcomFeed() : await fetchLinkedinFeed()
+  if (!Array.isArray(fetched)) {
+    throw new Error(fetched?.error || `${label}: feed fetch returned no items`)
   }
+  // LinkedIn ads are kept in the feed so the UI can dim them, but they are noise
+  // in a summary. X ads are already excluded at the API (includePromotedContent).
+  const items = fetched.filter((i) => !i?.promoted)
 
   let enrichment = {}
   let enrichmentNote = ''
