@@ -13,7 +13,7 @@
 
 // Bump on every change here. Printed on load so a stale unpacked build is
 // obvious from the console instead of being inferred from symptoms.
-const DIGEST_VERSION = 8
+const DIGEST_VERSION = 9
 console.log('[OpenFeed] digest v' + DIGEST_VERSION + ' (toolbar popup)')
 
 const DIGEST_ALARM = 'openfeed-daily-digest'
@@ -270,11 +270,26 @@ async function runDailyDigest() {
   return status
 }
 
-function scheduleDailyDigest() {
-  // 07:42 rather than 07:00: keeps the run off the hour, away from every other
-  // daily job on the machine. Alarms fire on wake if the laptop was asleep.
+// User-set in the toolbar popup. Defaults keep the original behaviour: on, 07:42.
+const DIGEST_SETTINGS_KEY = 'openfeed_digest_settings'
+const DIGEST_DEFAULT_SETTINGS = { enabled: true, time: '07:42' }
+
+async function getDigestSettings() {
+  const { [DIGEST_SETTINGS_KEY]: saved } = await chrome.storage.local.get(DIGEST_SETTINGS_KEY)
+  return { ...DIGEST_DEFAULT_SETTINGS, ...saved }
+}
+
+async function scheduleDailyDigest() {
+  // 07:42 by default rather than 07:00: keeps the run off the hour, away from
+  // every other daily job on the machine. Alarms fire on wake if the laptop was
+  // asleep.
+  const { enabled, time } = await getDigestSettings()
+  await chrome.alarms.clear(DIGEST_ALARM)
+  if (!enabled) return
+
+  const [hours, minutes] = (time || DIGEST_DEFAULT_SETTINGS.time).split(':').map(Number)
   const next = new Date()
-  next.setHours(7, 42, 0, 0)
+  next.setHours(hours, minutes, 0, 0)
   if (next.getTime() <= Date.now()) next.setDate(next.getDate() + 1)
   chrome.alarms.create(DIGEST_ALARM, {
     when: next.getTime(),
@@ -282,15 +297,18 @@ function scheduleDailyDigest() {
   })
 }
 
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === DIGEST_ALARM) runDailyDigest()
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+  if (alarm.name !== DIGEST_ALARM) return
+  const { enabled } = await getDigestSettings()
+  if (enabled) runDailyDigest()
 })
 
 chrome.runtime.onInstalled.addListener(scheduleDailyDigest)
-chrome.runtime.onStartup.addListener(() => {
-  chrome.alarms.get(DIGEST_ALARM, (existing) => {
-    if (!existing) scheduleDailyDigest()
-  })
+chrome.runtime.onStartup.addListener(scheduleDailyDigest)
+
+// The popup only writes the settings; rescheduling lives here with the alarm.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes[DIGEST_SETTINGS_KEY]) scheduleDailyDigest()
 })
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -354,7 +372,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return
   }
 
-  // Manual trigger, so the whole path can be tested without waiting for 07:42.
+  // Manual trigger, so the whole path can be tested without waiting for the alarm.
+  // Works even when the schedule is disabled.
   if (message.type === 'RUN_DIGEST_NOW') {
     runDailyDigest()
       .then((status) => sendResponse(status))

@@ -23,8 +23,37 @@ const when = (ts) => {
   return sameDay ? `today at ${time}` : `${d.toLocaleDateString([], { weekday: 'short' })} at ${time}`
 }
 
+const SETTINGS_KEY = 'openfeed_digest_settings'
+const DEFAULT_SETTINGS = { enabled: true, time: '07:42' }
+
+const loadSettings = async () => {
+  const { [SETTINGS_KEY]: saved } = await chrome.storage.local.get(SETTINGS_KEY)
+  return { ...DEFAULT_SETTINGS, ...saved }
+}
+
+const renderSettings = async () => {
+  const { enabled, time } = await loadSettings()
+  $('enabled').checked = enabled
+  $('time').value = time
+  $('time').disabled = !enabled
+}
+
+// The worker reschedules the alarm when it sees this key change.
+const saveSettings = async () => {
+  if (!$('time').value) return
+  await chrome.storage.local.set({
+    [SETTINGS_KEY]: { enabled: $('enabled').checked, time: $('time').value },
+  })
+  $('time').disabled = !$('enabled').checked
+}
+
 const renderSchedule = async () => {
+  const { enabled } = await loadSettings()
   const alarm = await chrome.alarms.get('openfeed-daily-digest')
+  if (!enabled) {
+    $('next').textContent = 'Off. Only runs when you press the button.'
+    return
+  }
   $('next').textContent = alarm
     ? `${when(alarm.scheduledTime)}\n(${Math.round((alarm.scheduledTime - Date.now()) / 60000)} min from now)`
     : 'No alarm registered. Reload the extension to schedule it.'
@@ -82,5 +111,15 @@ $('open').addEventListener('click', () => {
   chrome.tabs.create({ url: 'index.html' })
 })
 
+$('enabled').addEventListener('change', saveSettings)
+$('time').addEventListener('change', saveSettings)
+
+chrome.alarms.onAlarm.addListener(renderSchedule)
+chrome.storage.onChanged.addListener((changes, area) => {
+  // The alarm is recreated just after the settings land, so re-read it a beat later.
+  if (area === 'local' && changes[SETTINGS_KEY]) setTimeout(renderSchedule, 150)
+})
+
+renderSettings()
 renderSchedule()
 renderLast()

@@ -41,6 +41,9 @@
       .row { margin-top: 12px; padding-top: 10px; border-top: 1px solid #eff3f4; }
       .meta { color: #536471; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
       .label { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+      .setting { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+      input[type="time"] { font: inherit; padding: 2px 4px; }
+      input:disabled { opacity: 0.5; }
       .ok { color: #00ba7c; }
       .bad { color: #f4212e; }
     </style>
@@ -49,6 +52,11 @@
     <h1>OpenFeed daily digest</h1>
     <button id="run">Run digest now</button>
     <div id="live" class="meta" style="margin-top: 8px"></div>
+
+    <div class="row">
+      <label class="setting"><input type="checkbox" id="enabled" /> Run automatically every day</label>
+      <label class="setting">at <input type="time" id="time" /></label>
+    </div>
 
     <div class="row">
       <div class="label">Next scheduled run</div>
