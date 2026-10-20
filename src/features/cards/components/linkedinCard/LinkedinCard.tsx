@@ -11,10 +11,7 @@ import { useShallow } from 'zustand/shallow'
 import { useGetLinkedinFeed } from '../../api/getLinkedinFeed'
 import { useLazyListLoad } from '../../hooks/useLazyListLoad'
 import { MemoizedCardSettings } from '../CardSettings'
-import ArticleItem from './ArticleItem'
-
-const isPromotedItem = (item: LinkedinArticle) =>
-  item.time_ago?.startsWith('Promoted') || item.author_title === 'Promoted'
+import ArticleItem, { isPromotedItem } from './ArticleItem'
 
 export function LinkedinCard(props: CardPropsType) {
   const { meta } = props

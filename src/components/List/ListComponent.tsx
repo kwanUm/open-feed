@@ -140,7 +140,7 @@ export function ListComponent<T extends any>(props: ListComponentPropsType<T>) {
     )
   }
 
-  if (items && items.length > 0 && sortedData.length === 0) {
+  if ((sortBy as string) === 'top_today' && items && items.length > 0 && sortedData.length === 0) {
     return <p className="errorMsg">No posts from the last 24 hours.</p>
   }
 

@@ -13,6 +13,11 @@ type Props = BaseItemPropsType<LinkedinArticle> & {
   onToggleExpand: (id: string | null) => void
 }
 
+// background.js sets `promoted` from LinkedIn's own label. The text checks catch
+// posts cached before that flag existed.
+export const isPromotedItem = (item: LinkedinArticle) =>
+  !!item.promoted || item.time_ago?.startsWith('Promoted') || item.author_title === 'Promoted'
+
 const ArticleItem = (props: Props) => {
   const { item, analyticsTag, expandedId, onToggleExpand } = props
   const { listingMode } = useUserPreferences()
@@ -45,7 +50,7 @@ const ArticleItem = (props: Props) => {
     })
   }
 
-  const isPromoted = item.time_ago?.startsWith('Promoted') || item.author_title === 'Promoted'
+  const isPromoted = isPromotedItem(item)
 
   return (
     <div style={isPromoted ? { opacity: 0.45 } : undefined}>
